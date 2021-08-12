@@ -1,92 +1,146 @@
-import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  Platform,
-} from "react-native";
-import styled from "styled-components";
-import logo from "./images/avatar.png";
-import * as ImagePicker from "expo-image-picker";
-import * as Sharing from "expo-sharing";
-import uploadToAnonymousFilesAsync from "anonymous-files";
+import React, { createContext, useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-export default function App() {
-  const [selectedImage, setSelectedImage] = useState(null);
-  let openImagePickerAsync = async () => {
-    let permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permissionResult.granted === false) {
-      alert("Permission to access camera is required");
-      return;
-    }
+import Login from "./source/views/login/login";
+import Home from "./source/views/home/home";
+import Deposit from "./source/views/deposit/deposit";
+import SendMoney from "./source/views/sendMoney/send";
+import AddContact from "./source/views/addContact/addContact";
+import SendMoneyToContact from "./source/views/sendMoneyToContact/sendMoneyToContact";
+import Successful from "./source/views/successful/successful";
+import Services from "./source/views/services/services";
 
-    const pickerResult = await ImagePicker.launchImageLibraryAsync();
-    if (pickerResult.cancelled === true) {
-      return;
-    } else {
-      if (Platform.OS === "web") {
-        const remoteUri = await uploadToAnonymousFilesAsync(pickerResult.uri);
-
-        setSelectedImage({ localUri: pickerResult.uri, remoteUri });
-      } else {
-        setSelectedImage({ localUri: pickerResult.uri });
-      }
-    }
-  };
-
-  async function openShareDialog() {
-    if (!(await Sharing.isAvailableAsync())) {
-      alert("hola");
-      return;
-    }
-    await Sharing.shareAsync(selectedImage.localUri);
-  }
+export const Context = createContext();
+function App() {
+  const [contact, setContact] = useState([
+    {
+      key: "012180015789508577",
+      bank: "Interbank",
+      name: "Rivaldo Esteban",
+      email: "rivaldoestebang@gmail.com",
+    },
+  ]);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [currentContact, setCurrentContact] = useState(false);
+  const [paymentHistory, setPaymentHistory] = useState([
+    {
+      time: { hour: 14, minutes: 55 },
+      amount: 216.9,
+      concept: "Mcdonalds",
+      ref: 12313,
+    },
+  ]);
+  const [balance, setBalance] = useState("15000");
+  const Stack = createNativeStackNavigator();
 
   return (
-    <View style={styles.container}>
-      {/* <Text>iniciar sesión</Text> */}
-      <TouchableOpacity style={styles.button} onPress={openImagePickerAsync}>
-        <Image
-          source={{
-            uri: selectedImage !== null ? selectedImage.localUri : logo,
-          }}
-          style={styles.logo}
-        />
-      </TouchableOpacity>
-      {selectedImage ? (
-        <TouchableOpacity style={styles.button} onPress={openShareDialog}>
-          <Text style={styles.buttonText}>Sharing</Text>
-        </TouchableOpacity>
-      ) : null}
-    </View>
+    <NavigationContainer>
+      <Context.Provider
+        value={{
+          login: { value: isSignedIn, setIsSignedIn },
+          contacts: { value: contact, setContact },
+          contact: { value: currentContact, setCurrentContact },
+          history: { value: paymentHistory, setPaymentHistory },
+          balance: { value: balance, setBalance },
+        }}
+      >
+        <Stack.Navigator>
+          {isSignedIn ? (
+            <>
+              <Stack.Screen
+                name="Home"
+                component={Home}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Depositar"
+                component={Deposit}
+                options={{
+                  title: "Depositar",
+                  headerStyle: { backgroundColor: "rgba(3, 26, 110, 1)" },
+                  headerTintColor: "white",
+                  headerTitleStyle: {
+                    fontWeight: "700",
+                    fontSize: 16,
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="SendMoney"
+                component={SendMoney}
+                options={{
+                  title: "Enviar dinero a:",
+                  headerStyle: { backgroundColor: "rgba(3, 26, 110, 1)" },
+                  headerTintColor: "white",
+                  headerTitleStyle: {
+                    fontWeight: "700",
+                    fontSize: 16,
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="AddContact"
+                component={AddContact}
+                options={{
+                  title: "Nuevo contacto",
+                  headerStyle: { backgroundColor: "rgba(3, 26, 110, 1)" },
+                  headerTintColor: "white",
+                  headerTitleStyle: {
+                    fontWeight: "700",
+                    fontSize: 16,
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="SendMoneyToContact"
+                component={SendMoneyToContact}
+                options={{
+                  title: "Enviar dinero",
+                  headerStyle: { backgroundColor: "rgba(3, 26, 110, 1)" },
+                  headerTintColor: "white",
+                  headerTitleStyle: {
+                    fontWeight: "700",
+                    fontSize: 16,
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="Services"
+                component={Services}
+                options={{
+                  title: "Servicios",
+                  headerStyle: { backgroundColor: "rgba(3, 26, 110, 1)" },
+                  headerTintColor: "white",
+                  headerTitleStyle: {
+                    fontWeight: "700",
+                    fontSize: 16,
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="Successful"
+                component={Successful}
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </>
+          ) : (
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{
+                headerShown: false,
+              }}
+            />
+          )}
+        </Stack.Navigator>
+      </Context.Provider>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ECECEC",
-    borderColor: "red",
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  logo: {
-    height: 80,
-    width: 80,
-    borderRadius: 4,
-    resizeMode: "contain",
-  },
-  button: {
-    borderRadius: 16,
-    padding: 16,
-    backgroundColor: "#031A6E",
-  },
-  buttonText: {
-    color: "#fff",
-  },
-});
+export default App;
