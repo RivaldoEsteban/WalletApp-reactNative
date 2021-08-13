@@ -3,6 +3,7 @@ import avatar from "../../../images/avatar.png";
 import Context from "../../../context/context";
 // import * as SecureStore from "expo-secure-store";
 import imageBackground from "../../../images/bg.png";
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 import {
   StyleSheet,
@@ -12,6 +13,7 @@ import {
   TextInput,
   TouchableOpacity,
   ImageBackground,
+  ScrollView,
 } from "react-native";
 
 function Login({}) {
@@ -50,7 +52,7 @@ function Login({}) {
 
   return (
     <ImageBackground source={imageBackground} style={styles.login}>
-      <View>
+      <ScrollView contentContainerStyle={styles.container}>
         <Image source={avatar} style={styles.loginImage} />
         <Text style={styles.loginTitle}>Iniciar sesión</Text>
         <Text style={styles.loginLabel}>Correo electrónico</Text>
@@ -73,7 +75,8 @@ function Login({}) {
             <Text style={styles.buttonText}>Iniciar sesión</Text>
           </TouchableOpacity>
         </View>
-      </View>
+        <KeyboardSpacer/>
+      </ScrollView>
     </ImageBackground>
   );
 }
@@ -81,6 +84,10 @@ function Login({}) {
 export default Login;
 
 const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    justifyContent: 'center'
+  },
   login: {
     // backgroundColor: "rgba(236, 236, 236, 0.1)",
     // height: "100%",
