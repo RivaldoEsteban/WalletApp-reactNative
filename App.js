@@ -10,8 +10,12 @@ import AddContact from "./source/views/addContact/addContact";
 import SendMoneyToContact from "./source/views/sendMoneyToContact/sendMoneyToContact";
 import Successful from "./source/views/successful/successful";
 import Services from "./source/views/services/services";
+import SuccessfulReload from "./source/views/successfulReload/successfulReload";
 
-export const Context = createContext();
+import Context from "./context/context";
+
+// export const Context = createContext();
+
 function App() {
   const [contact, setContact] = useState([
     {
@@ -123,6 +127,13 @@ function App() {
               <Stack.Screen
                 name="Successful"
                 component={Successful}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="SuccessfulReload"
+                component={SuccessfulReload}
                 options={{
                   headerShown: false,
                 }}

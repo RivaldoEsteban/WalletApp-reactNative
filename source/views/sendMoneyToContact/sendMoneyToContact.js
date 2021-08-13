@@ -1,10 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { StyleSheet, View, Text, TextInput } from "react-native";
-import { Context } from "../../../App";
+import Context from "../../../context/context";
 import Contact from "../../../components/contact";
 import Button from "../../../components/button";
 
 export default function SendMoneyToContact({ navigation }) {
+  const [active, setActive] = useState(false);
   const [amount, setAmount] = useState("0.00");
   const [concept, setConcept] = useState("");
   const [ref, setRef] = useState("");
@@ -26,8 +27,16 @@ export default function SendMoneyToContact({ navigation }) {
     setRef(event);
   }
 
+  useEffect(() => {
+    if (amount.length > 0 && concept.length > 2 && ref.length < 8) {
+      setActive(true);
+    } else {
+      setActive(false);
+    }
+  }, [handleCurrentAmount, handlePaymentConcept, handlePaymentRef]);
+
   function handleSendMoney() {
-    if (amount.length > 0 && concept.length > 0 && ref.length > 0) {
+    if (active) {
       setBalance(Number(currentBalance) - Number(amount));
       context.history.setPaymentHistory([
         ...context.history.value,
@@ -36,6 +45,7 @@ export default function SendMoneyToContact({ navigation }) {
           amount: amount,
           concept: concept,
           ref: ref,
+          id: `id${amount}id${ref}id`,
         },
       ]);
       navigation.navigate("Successful");
@@ -82,7 +92,7 @@ export default function SendMoneyToContact({ navigation }) {
           </View>
         </View>
       </View>
-      <View>
+      <View style={active ? styles.buttonActive : styles.buttonDisabled}>
         <Button text="Enviar dinero" changePage={handleSendMoney} />
       </View>
     </View>
@@ -90,6 +100,12 @@ export default function SendMoneyToContact({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  buttonActive: {
+    opacity: 1,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
   container: {
     height: "100%",
     backgroundColor: "rgba(143, 143, 143, .1)",

@@ -1,7 +1,8 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import avatar from "../../../images/avatar.png";
-import { Context } from "../../../App";
-import * as SecureStore from "expo-secure-store";
+import Context from "../../../context/context";
+// import * as SecureStore from "expo-secure-store";
+import imageBackground from "../../../images/bg.png";
 
 import {
   StyleSheet,
@@ -10,11 +11,12 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  ImageBackground,
 } from "react-native";
 
 function Login({}) {
   const context = useContext(Context);
-  const emailRef = useRef(null);
+  const [buttonActive, setButtonActive] = useState(false);
   const [email, setEmail] = useState("");
   const [pasword, setPasword] = useState("");
 
@@ -23,7 +25,9 @@ function Login({}) {
   async function handlePage() {
     // await SecureStore.setItemAsync("email", email);
     // await SecureStore.setItemAsync("pasword", pasword);
-    context.login.setIsSignedIn(true);
+    if (buttonActive) {
+      context.login.setIsSignedIn(true);
+    }
   }
 
   function handleEmail(event) {
@@ -36,28 +40,41 @@ function Login({}) {
     onChangeValue({ ...value, pasword });
   }
 
+  useEffect(() => {
+    if (pasword.length > 4 && email.length > 4) {
+      setButtonActive(true);
+    } else {
+      setButtonActive(false);
+    }
+  }, [handleEmail, handlePasword]);
+
   return (
-    <View style={styles.login}>
-      <Image source={avatar} style={styles.loginImage} />
-      <Text style={styles.loginTitle}>Iniciar sesión</Text>
-      <Text style={styles.loginLabel}>Correo electrónico</Text>
-      <TextInput
-        placeholder="Ingresa tu correo"
-        style={styles.input}
-        ref={emailRef}
-        onChangeText={handleEmail}
-      />
-      <Text style={styles.loginLabel}>Contraseña</Text>
-      <TextInput
-        placeholder="Ingresa tu contraseña"
-        style={styles.input}
-        onChangeText={handlePasword}
-        required
-      />
-      <TouchableOpacity style={styles.button} onPress={handlePage}>
-        <Text style={styles.buttonText}>Press Here</Text>
-      </TouchableOpacity>
-    </View>
+    <ImageBackground source={imageBackground} style={styles.login}>
+      <View>
+        <Image source={avatar} style={styles.loginImage} />
+        <Text style={styles.loginTitle}>Iniciar sesión</Text>
+        <Text style={styles.loginLabel}>Correo electrónico</Text>
+        <TextInput
+          placeholder="Ingresa tu correo"
+          style={styles.input}
+          onChangeText={handleEmail}
+        />
+        <Text style={styles.loginLabel}>Contraseña</Text>
+        <TextInput
+          placeholder="Ingresa tu contraseña"
+          style={styles.input}
+          onChangeText={handlePasword}
+          required
+        />
+        <View
+          style={buttonActive ? styles.buttonActive : styles.buttonDisabled}
+        >
+          <TouchableOpacity style={styles.button} onPress={handlePage}>
+            <Text style={styles.buttonText}>Iniciar sesión</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </ImageBackground>
   );
 }
 
@@ -65,11 +82,12 @@ export default Login;
 
 const styles = StyleSheet.create({
   login: {
-    backgroundColor: "rgba(236, 236, 236, 0.1)",
-    height: "100%",
+    // backgroundColor: "rgba(236, 236, 236, 0.1)",
+    // height: "100%",
     display: "flex",
     padding: 16,
     justifyContent: "center",
+    flex: 1,
   },
   loginImage: {
     width: 80,
@@ -79,10 +97,12 @@ const styles = StyleSheet.create({
     fontSize: 28,
     lineHeight: 42,
     fontWeight: "600",
+    color: "white",
   },
   loginLabel: {
     marginTop: 16,
     marginBottom: 4,
+    color: "white",
   },
   input: {
     padding: 8,
@@ -90,17 +110,24 @@ const styles = StyleSheet.create({
     borderColor: "rgba(112, 112, 112, 1)",
     borderWidth: 1,
     fontSize: 14,
+    backgroundColor: "white",
   },
   button: {
     backgroundColor: "rgba(3, 26, 110, 1)",
-    padding: 8,
+    padding: 12,
     borderRadius: 8,
     textAlign: "center",
-    marginTop: 16,
+    marginTop: 24,
   },
   buttonText: {
     color: "#fff",
     fontWeight: "600",
     textAlign: "center",
+  },
+  buttonActive: {
+    opacity: 1,
+  },
+  buttonDisabled: {
+    opacity: 1,
   },
 });

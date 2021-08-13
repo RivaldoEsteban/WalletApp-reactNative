@@ -1,15 +1,6 @@
-import { NavigationContainer } from "@react-navigation/native";
-import React, { useState, useContext } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  TextInput,
-} from "react-native";
-import { Context } from "../../../App";
+import React, { useState, useContext, useEffect } from "react";
+import { StyleSheet, View, Text, TextInput } from "react-native";
+import Context from "../../../context/context";
 import Button from "../../../components/button";
 
 export default function AddContact({ navigation }) {
@@ -20,11 +11,10 @@ export default function AddContact({ navigation }) {
   const [bank, setBank] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [buttonStyle, setButtonStyle] = useState(0.5);
+  const [buttonStyle, setButtonStyle] = useState(false);
 
   function addKey(event) {
     setKey(event);
-    setButtonStyle(1);
   }
   function addBank(event) {
     setBank(event);
@@ -35,14 +25,21 @@ export default function AddContact({ navigation }) {
   function addEmal(event) {
     setEmail(event);
   }
+  useEffect(() => {
+    if (
+      key.length > 2 &&
+      bank.length > 2 &&
+      name.length > 2 &&
+      email.length > 2
+    ) {
+      setButtonStyle(true);
+    } else {
+      setButtonStyle(false);
+    }
+  }, [addKey, addBank, addEmal]);
 
   function addContact() {
-    if (
-      key.length > 0 &&
-      bank.length > 0 &&
-      name.length > 0 &&
-      email.length > 0
-    ) {
+    if (buttonStyle) {
       context.contacts.setContact([
         ...contact,
         { key: key, bank: bank, name: name, email: email },
@@ -89,14 +86,20 @@ export default function AddContact({ navigation }) {
           />
         </View>
       </View>
-      <View style={{ opacity: buttonStyle }}>
-        <Button text="Agregar Contacto" addContact={addContact} />
+      <View style={buttonStyle ? styles.buttonActive : styles.buttonDisabled}>
+        <Button text="Agregar Contacto" changePage={addContact} />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  buttonActive: {
+    opacity: 1,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
   container: {
     height: "100%",
   },

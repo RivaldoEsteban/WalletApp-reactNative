@@ -7,7 +7,7 @@ import {
   Image,
   ScrollView,
 } from "react-native";
-import { Context } from "../../../App";
+import Context from "../../../context/context";
 import logo from "../../../images/logo.png";
 function Home({ navigation }) {
   const context = useContext(Context);
@@ -42,7 +42,7 @@ function Home({ navigation }) {
       <ScrollView style={styles.operationsContainer}>
         {accountStatus.map((item) => {
           return (
-            <View style={styles.item} key={`key${item.amount}`}>
+            <View style={styles.item} key={`${item.id}id`}>
               <View style={styles.itemDescription}>
                 <View style={styles.itemImage}>
                   <Image
