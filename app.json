@@ -4,11 +4,11 @@
     "slug": "walletApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/avatar.png",
+    "icon": "./images/avatar.png",
     "splash": {
-      "image": "./assets/avatar.png",
+      "image": "./images/logo2.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#483d8b"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -27,6 +27,8 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": "Lleva el control total de tus finanzas desde la palma de tu mano. Darte cuenta de los gastos que realizas te ayudara a pensar 2 veces antes de sacar la tarjeta para pagar.",
+    "githubUrl": "https://github.com/RivaldoEsteban/WalletApp-reactNative"
   }
 }
